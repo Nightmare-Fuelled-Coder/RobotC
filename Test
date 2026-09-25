@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROBOT — VEX Cortex Block Programmer</title>
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<style>
+:root{--orange:#ef6c00;--dark:#202124;--dark2:#292a2d;--panel:#f7f7f7;--line:#d5d5d5}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:#222}
+body{background:#ececec}.app{height:100vh;display:grid;grid-template-rows:58px 42px 1fr 28px}
+.top{background:#202124;color:white;display:flex;align-items:center;padding:0 16px;gap:13px}
+.robot-logo{font-size:21px;font-weight:800;letter-spacing:1px;color:#ff8a00}
+.project-name{font-size:14px;color:#ddd;border-left:1px solid #555;padding-left:14px}
+.top button{background:#333538;border:1px solid #505154;color:#eee;border-radius:4px;padding:8px 13px;cursor:pointer}
+.top button:hover{background:#46474a}.top .run{background:#ef6c00;border-color:#ef6c00;font-weight:bold}
+.top .stop{background:#9b2525}
+.grow{flex:1}
+.tabs{background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:end;padding-left:13px}
+.tab{padding:12px 23px 10px;border-right:1px solid #ddd;font-size:13px;cursor:pointer}
+.tab.active{font-weight:bold;border-bottom:3px solid var(--orange);color:#d85f00}
+.body{min-height:0;display:grid;grid-template-columns:250px 1fr 390px}
+.left{background:#fff;border-right:1px solid #ccc;display:flex;flex-direction:column;min-height:0}
+.left-title,.right-title{font-size:13px;font-weight:bold;padding:13px 14px;border-bottom:1px solid #ddd}
+.device-section{padding:12px;border-bottom:1px solid #ddd}
+.device-title{font-weight:bold;font-size:12px;margin-bottom:9px;color:#555}
+.device{display:flex;align-items:center;padding:9px;border:1px solid #ddd;border-radius:5px;margin:5px 0;background:#fafafa;cursor:pointer}
+.device:hover{border-color:#ef6c00;background:#fff8f2}
+.device-icon{width:30px;height:30px;border-radius:5px;background:#eee;margin-right:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.device small{display:block;color:#777;margin-top:2px}
+.config{margin-top:auto;padding:12px;border-top:1px solid #ddd}
+.config button{width:100%;padding:10px;background:#ef6c00;color:white;border:0;border-radius:4px;font-weight:bold}
+.workspace{min-width:0;min-height:0;position:relative}
+#blockly{width:100%;height:100%}
+.right{background:#1e1e1e;color:#ddd;display:flex;flex-direction:column;min-height:0;border-left:1px solid #333}
+.right-tabs{height:42px;display:flex;border-bottom:1px solid #3a3a3a}
+.rtab{padding:13px 15px;font-size:12px}.rtab.active{border-bottom:2px solid #ef6c00;color:#fff}
+#code{flex:1;resize:none;background:#1e1e1e;color:#d4d4d4;border:0;outline:0;padding:15px;font:13px/1.55 Consolas,monospace}
+.codebar{display:flex;gap:7px;padding:9px;border-top:1px solid #3a3a3a}
+.codebar button{flex:1;padding:8px;border:0;border-radius:4px;cursor:pointer}.gen{background:#ef6c00;color:#fff}.copy{background:#444;color:#fff}
+.status{background:#202124;color:#aaa;display:flex;align-items:center;padding:0 12px;font-size:11px;gap:20px}
+.status .ok{color:#6fcf72}
+.modal{display:none;position:absolute;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center}
+.modal.show{display:flex}.dialog{width:560px;background:white;border-radius:8px;box-shadow:0 10px 40px #0006;overflow:hidden}
+.dialog h2{margin:0;padding:18px;background:#202124;color:white;font-size:18px}
+.dialog-body{padding:18px}.row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin:12px 0;align-items:center}
+.row input,.row select{padding:8px;border:1px solid #bbb;border-radius:4px}
+.dialog-foot{padding:12px;background:#f2f2f2;text-align:right}.dialog-foot button{padding:9px 15px;border:0;border-radius:4px;margin-left:8px}.okbtn{background:#ef6c00;color:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="robot-logo">ROBOT</div><div class="project-name">VEX Cortex Project</div>
+ <button id="new">New</button><button id="save">Save</button><button id="undo">↶</button><button id="redo">↷</button>
+ <div class="grow"></div><button id="devices">⚙ Robot Configuration</button><button class="run" id="generate">▶ Generate</button><button class="stop">■</button>
+</header>
+<nav class="tabs"><div class="tab active">main</div><div class="tab">autonomous</div><div class="tab">usercontrol</div><div class="tab">+ Add Task</div></nav>
+
+<div class="body">
+<aside class="left">
+ <div class="left-title">ROBOT CONFIGURATION</div>
+ <div class="device-section">
+  <div class="device-title">MOTORS</div>
+  <div class="device"><div class="device-icon">⚙</div><div><b>LeftMotor</b><small>Port 1 • VEX 393</small></div></div>
+  <div class="device"><div class="device-icon">⚙</div><div><b>RightMotor</b><small>Port 2 • VEX 393</small></div></div>
+ </div>
+ <div class="device-section">
+  <div class="device-title">SENSORS</div>
+  <div class="device"><div class="device-icon">●</div><div><b>Bumper</b><small>Digital • dgtl1</small></div></div>
+  <div class="device"><div class="device-icon">↻</div><div><b>Encoder</b><small>Digital • dgtl2/3</small></div></div>
+ </div>
+ <div class="device-section">
+  <div class="device-title">CONTROLLER</div>
+  <div class="device"><div class="device-icon">🎮</div><div><b>Joystick</b><small>USB / VEX Controller</small></div></div>
+ </div>
+ <div class="config"><button id="configBtn">Configure Robot</button></div>
+</aside>
+
+<main class="workspace"><div id="blockly"></div></main>
+
+<aside class="right">
+ <div class="right-tabs"><div class="rtab active">ROBOTC</div><div class="rtab">Messages</div></div>
+ <textarea id="code" spellcheck="false"></textarea>
+ <div class="codebar"><button class="gen" id="gen2">Generate RobotC</button><button class="copy" id="copy">Copy Code</button></div>
+</aside>
+</div>
+<footer class="status"><span class="ok">● Ready</span><span>VEX Cortex</span><span>RobotC</span><span id="count">0 blocks</span></footer>
+</div>
+
+<div class="modal" id="modal"><div class="dialog">
+<h2>Robot Configuration</h2>
+<div class="dialog-body">
+<div class="row"><label>Robot name</label><input id="robotName" value="VEX Cortex Robot"></div>
+<div class="row"><label>Left motor</label><select id="lm"><option value="1">Port 1</option><option value="2">Port 2</option><option value="3">Port 3</option><option value="4">Port 4</option></select></div>
+<div class="row"><label>Right motor</label><select id="rm"><option value="2">Port 2</option><option value="1">Port 1</option><option value="3">Port 3</option><option value="4">Port 4</option></select></div>
+<div class="row"><label>Bumper</label><select><option>dgtl1</option><option>dgtl2</option><option>dgtl3</option></select></div>
+</div><div class="dialog-foot"><button id="close">Cancel</button><button class="okbtn" id="apply">Apply</button></div>
+</div></div>
+
+<xml id="toolbox" style="display:none">
+<category name="START" colour="#e86c00"><block type="rc_start"></block></category>
+<category name="MOTION" colour="#e86c00">
+ <block type="rc_spin"></block><block type="rc_stop"></block><block type="rc_drive"></block><block type="rc_turn"></block>
+</category>
+<category name="CONTROL" colour="#f2a900">
+ <block type="rc_wait"></block><block type="rc_repeat"><value name="N"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block><block type="rc_forever"></block>
+</category>
+<category name="SENSING" colour="#4285f4"><block type="rc_bumper"></block><block type="rc_encoder"></block><block type="rc_timer"></block></category>
+<category name="LOGIC" colour="#58a55c"><block type="controls_if"></block><block type="logic_compare"></block><block type="logic_boolean"></block></category>
+<category name="OPERATORS" colour="#8e63ce"><block type="math_number"></block><block type="math_arithmetic"></block></category>
+<category name="VARIABLES" colour="#d65db1" custom="VARIABLE"></category>
+</xml>
+
+<script>
+function stmtBlock(def,inputs,color){
+ Blockly.Blocks[def]={init(){inputs.forEach(x=>{if(x.type==="dummy")this.appendDummyInput().appendField(x.text);else this.appendValueInput(x.name).setCheck(x.check||null).appendField(x.text||"")});this.setPreviousStatement(true);this.setNextStatement(true);this.setColour(color)}}
+}
+Blockly.Blocks.rc_start={init(){this.appendDummyInput().appendField("when program starts");this.setNextStatement(true);this.setColour("#e86c00")}};
+Blockly.Blocks.rc_spin={init(){this.appendDummyInput().appendField("spin").appendField(new Blockly.FieldDropdown([["LeftMotor","LeftMotor"],["RightMotor","RightMotor"]]),"M").appendField("at").appendField(new Blockly.FieldNumber(100,-100,100),"P").appendField("%");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
+Blockly.Blocks.rc_stop={init(){this.appendDummyInput().appendField("stop").appendField(new Blockly.FieldDropdown([["LeftMotor","LeftMotor"],["RightMotor","RightMotor"],["both motors","BOTH"]]),"M");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
+Blockly.Blocks.rc_drive={init(){this.appendDummyInput().appendField("drive").appendField(new Blockly.FieldDropdown([["forward","F"],["reverse","R"]]),"D").appendField("at").appendField(new Blockly.FieldNumber(75,0,100),"P").appendField("%");this.appendValueInput("T").setCheck("Number").appendField("for seconds");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
+Blockly.Blocks.rc_turn={init(){this.appendDummyInput().appendField("turn").appendField(new Blockly.FieldDropdown([["left","L"],["right","R"]]),"D").appendField("at").appendField(new Blockly.FieldNumber(50,0,100),"P").appendField("%");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
+Blockly.Blocks.rc_wait={init(){this.appendValueInput("T").setCheck("Number").appendField("wait");this.appendDummyInput().appendField("seconds");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
+Blockly.Blocks.rc_repeat={init(){this.appendValueInput("N").setCheck("Number").appendField("repeat");this.appendDummyInput().appendField("times");this.appendStatementInput("DO").appendField("do");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
+Blockly.Blocks.rc_forever={init(){this.appendStatementInput("DO").appendField("forever");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
+Blockly.Blocks.rc_bumper={init(){this.appendDummyInput().appendField("Bumper pressed");this.setOutput(true,"Boolean");this.setColour("#4285f4")}};
+Blockly.Blocks.rc_encoder={init(){this.appendDummyInput().appendField("Encoder counts");this.setOutput(true,"Number");this.setColour("#4285f4")}};
+Blockly.Blocks.rc_timer={init(){this.appendDummyInput().appendField("Timer seconds");this.setOutput(true,"Number");this.setColour("#4285f4")}};
+
+const G=new Blockly.Generator("RobotC");G.ORDER_ATOMIC=0;G.ORDER_NONE=99;G.init=()=>{};G.finish=x=>x;
+G.scrub_=function(b,c,t){let n=b.nextConnection&&b.nextConnection.targetBlock();return n&&!t?c+G.blockToCode(n):c};
+G.v=(b,n)=>G.valueToCode(b,n,G.ORDER_NONE)||"0";
+G.rc_start=()=>"";G.rc_spin=b=>`motor[${b.getFieldValue("M")} ] = ${b.getFieldValue("P")};\n`.replace(" ]","]");
+G.rc_stop=b=>b.getFieldValue("M")==="BOTH"?`motor[LeftMotor] = 0;\nmotor[RightMotor] = 0;\n`:`motor[${b.getFieldValue("M")}] = 0;\n`;
+G.rc_drive=b=>{let p=G.v(b,"T"),q=b.getFieldValue("P")*(b.getFieldValue("D")==="R"?-1:1);return `motor[LeftMotor] = ${q};\nmotor[RightMotor] = ${q};\nwait1Msec(${p} * 1000);\nmotor[LeftMotor] = 0;\nmotor[RightMotor] = 0;\n`};
+G.rc_turn=b=>{let p=b.getFieldValue("P"),q=b.getFieldValue("D")==="L"?-p:p;return `motor[LeftMotor] = ${q};\nmotor[RightMotor] = ${-q};\n`};
+G.rc_wait=b=>`wait1Msec(${G.v(b,"T")} * 1000);\n`;
+G.rc_repeat=b=>`for(int i = 0; i < ${G.v(b,"N")}; i++) {\n${G.statementToCode(b,"DO")}}\n`;
+G.rc_forever=b=>`while(true) {\n${G.statementToCode(b,"DO")}}\n`;
+G.rc_bumper=()=>["SensorValue[bumper] == 1",G.ORDER_ATOMIC];G.rc_encoder=()=>["SensorValue[encoder] ",G.ORDER_ATOMIC];G.rc_timer=()=>["time1[T1] / 1000.0",G.ORDER_ATOMIC];
+G.math_number=b=>[String(b.getFieldValue("NUM")),G.ORDER_ATOMIC];
+G.math_arithmetic=b=>{let o={ADD:"+",MINUS:"-",MULTIPLY:"*",DIVIDE:"/"}[b.getFieldValue("OP")]||"+";return [`(${G.v(b,"A")} ${o} ${G.v(b,"B")})`,G.ORDER_ATOMIC]};
+G.logic_boolean=b=>[b.getFieldValue("BOOL")==="TRUE"?"true":"false",G.ORDER_ATOMIC];
+G.logic_compare=b=>[`${G.v(b,"A")} ${({EQ:"==",NEQ:"!=",LT:"<",LTE:"<=",GT:">",GTE:">="}[b.getFieldValue("OP")])} ${G.v(b,"B")}`,G.ORDER_ATOMIC];
+
+const ws=Blockly.inject("blockly",{toolbox:document.getElementById("toolbox"),trashcan:true,grid:{spacing:20,length:3,colour:"#d2d2d2",snap:true},zoom:{controls:true,wheel:true,startScale:.9,maxScale:1.8,minScale:.5}});
+ws.addChangeListener(()=>document.getElementById("count").textContent=ws.getAllBlocks(false).length+" blocks");
+
+function generate(){
+ let body=G.workspaceToCode(ws);
+ let code=`#pragma config(Sensor, in1, bumper, sensorTouch)
+#pragma config(Motor, port1, LeftMotor, tmotorVex393_HBridge, openLoop)
+#pragma config(Motor, port2, RightMotor, tmotorVex393_MC29, openLoop)
+#pragma platform(VEX2)
+
+task main()
+{
+${body.split("\n").map(x=>x?"    "+x:x).join("\n")}
+}`;
+ document.getElementById("code").value=code;
+}
+document.getElementById("generate").onclick=generate;document.getElementById("gen2").onclick=generate;
+document.getElementById("copy").onclick=()=>{generate();navigator.clipboard.writeText(document.getElementById("code").value);};
+document.getElementById("new").onclick=()=>{ws.clear();document.getElementById("code").value=""};
+document.getElementById("save").onclick=()=>localStorage.setItem("robotProject",JSON.stringify(Blockly.serialization.workspaces.save(ws)));
+document.getElementById("devices").onclick=document.getElementById("configBtn").onclick=()=>document.getElementById("modal").classList.add("show");
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");
+document.getElementById("apply").onclick=()=>document.getElementById("modal").classList.remove("show");
+document.getElementById("undo").onclick=()=>ws.undo(false);document.getElementById("redo").onclick=()=>ws.undo(true);
+generate();
+</script>
+</body>
+</html>
