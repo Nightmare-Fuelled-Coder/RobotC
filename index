@@ -1,174 +1,371 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ROBOT — VEX Cortex Block Programmer</title>
+<title>RobotC Blocks — V5 Style</title>
 <script src="https://unpkg.com/blockly/blockly.min.js"></script>
 <style>
-:root{--orange:#ef6c00;--dark:#202124;--dark2:#292a2d;--panel:#f7f7f7;--line:#d5d5d5}
-*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:#222}
-body{background:#ececec}.app{height:100vh;display:grid;grid-template-rows:58px 42px 1fr 28px}
-.top{background:#202124;color:white;display:flex;align-items:center;padding:0 16px;gap:13px}
-.robot-logo{font-size:21px;font-weight:800;letter-spacing:1px;color:#ff8a00}
-.project-name{font-size:14px;color:#ddd;border-left:1px solid #555;padding-left:14px}
-.top button{background:#333538;border:1px solid #505154;color:#eee;border-radius:4px;padding:8px 13px;cursor:pointer}
-.top button:hover{background:#46474a}.top .run{background:#ef6c00;border-color:#ef6c00;font-weight:bold}
-.top .stop{background:#9b2525}
-.grow{flex:1}
-.tabs{background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:end;padding-left:13px}
-.tab{padding:12px 23px 10px;border-right:1px solid #ddd;font-size:13px;cursor:pointer}
-.tab.active{font-weight:bold;border-bottom:3px solid var(--orange);color:#d85f00}
-.body{min-height:0;display:grid;grid-template-columns:250px 1fr 390px}
-.left{background:#fff;border-right:1px solid #ccc;display:flex;flex-direction:column;min-height:0}
-.left-title,.right-title{font-size:13px;font-weight:bold;padding:13px 14px;border-bottom:1px solid #ddd}
-.device-section{padding:12px;border-bottom:1px solid #ddd}
-.device-title{font-weight:bold;font-size:12px;margin-bottom:9px;color:#555}
-.device{display:flex;align-items:center;padding:9px;border:1px solid #ddd;border-radius:5px;margin:5px 0;background:#fafafa;cursor:pointer}
-.device:hover{border-color:#ef6c00;background:#fff8f2}
-.device-icon{width:30px;height:30px;border-radius:5px;background:#eee;margin-right:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.device small{display:block;color:#777;margin-top:2px}
-.config{margin-top:auto;padding:12px;border-top:1px solid #ddd}
-.config button{width:100%;padding:10px;background:#ef6c00;color:white;border:0;border-radius:4px;font-weight:bold}
-.workspace{min-width:0;min-height:0;position:relative}
-#blockly{width:100%;height:100%}
-.right{background:#1e1e1e;color:#ddd;display:flex;flex-direction:column;min-height:0;border-left:1px solid #333}
-.right-tabs{height:42px;display:flex;border-bottom:1px solid #3a3a3a}
-.rtab{padding:13px 15px;font-size:12px}.rtab.active{border-bottom:2px solid #ef6c00;color:#fff}
-#code{flex:1;resize:none;background:#1e1e1e;color:#d4d4d4;border:0;outline:0;padding:15px;font:13px/1.55 Consolas,monospace}
-.codebar{display:flex;gap:7px;padding:9px;border-top:1px solid #3a3a3a}
-.codebar button{flex:1;padding:8px;border:0;border-radius:4px;cursor:pointer}.gen{background:#ef6c00;color:#fff}.copy{background:#444;color:#fff}
-.status{background:#202124;color:#aaa;display:flex;align-items:center;padding:0 12px;font-size:11px;gap:20px}
-.status .ok{color:#6fcf72}
-.modal{display:none;position:absolute;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center}
-.modal.show{display:flex}.dialog{width:560px;background:white;border-radius:8px;box-shadow:0 10px 40px #0006;overflow:hidden}
-.dialog h2{margin:0;padding:18px;background:#202124;color:white;font-size:18px}
-.dialog-body{padding:18px}.row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin:12px 0;align-items:center}
-.row input,.row select{padding:8px;border:1px solid #bbb;border-radius:4px}
-.dialog-foot{padding:12px;background:#f2f2f2;text-align:right}.dialog-foot button{padding:9px 15px;border:0;border-radius:4px;margin-left:8px}.okbtn{background:#ef6c00;color:#fff}
+  :root{
+    --blue:#1769aa; --blue2:#0e4f86; --navy:#102b43; --panel:#f5f7fa;
+    --border:#d5dce3; --text:#243746; --orange:#f39c12;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,Arial,sans-serif;color:var(--text);overflow:hidden}
+  body{background:#e9edf1}
+  .app{height:100vh;display:grid;grid-template-rows:54px 44px 1fr}
+  header{background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 18px;gap:16px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:.2px}
+  .logo span{color:#5cc8ff}
+  .project{margin-left:10px;padding-left:18px;border-left:1px solid #496175;font-size:14px;color:#dbe8f2}
+  .spacer{flex:1}
+  button{border:0;border-radius:5px;font:inherit;cursor:pointer}
+  .topbtn{padding:9px 14px;color:#fff;background:#24516f}
+  .topbtn:hover{background:#326885}
+  .run{background:#22a45a!important;font-weight:700}
+  .run:hover{background:#1c8b4b!important}
+  .tabs{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding-left:16px;gap:3px}
+  .tab{height:44px;padding:0 18px;background:transparent;color:#536573;border-bottom:3px solid transparent}
+  .tab.active{color:var(--blue);font-weight:700;border-bottom-color:var(--blue)}
+  .main{min-height:0;display:grid;grid-template-columns:245px 1fr 350px;gap:0}
+  .sidebar{background:#fff;border-right:1px solid var(--border);min-height:0;overflow:auto}
+  .sidehead{padding:15px 16px 9px;font-weight:800;font-size:13px;text-transform:uppercase;color:#6a7b88}
+  .cat{margin:4px 10px;padding:10px 12px;border-radius:5px;background:#eef4f8;cursor:pointer}
+  .cat:hover{background:#dfeef8}
+  .cat b{display:block;font-size:13px}
+  .cat small{color:#71818e}
+  .tip{margin:18px 14px;padding:12px;border:1px solid #dbe5eb;border-radius:6px;background:#fafcfd;font-size:12px;line-height:1.45}
+  #blocklyDiv{position:relative;min-width:0;min-height:0}
+  .workspacebar{position:absolute;z-index:10;left:12px;top:10px;background:#fff;border:1px solid var(--border);box-shadow:0 2px 8px #0001;border-radius:5px;padding:6px 9px;font-size:12px;color:#687986;pointer-events:none}
+  .right{background:#fff;border-left:1px solid var(--border);min-height:0;display:flex;flex-direction:column}
+  .codehead{height:48px;padding:0 14px;display:flex;align-items:center;border-bottom:1px solid var(--border);font-weight:800}
+  .codehead .spacer{flex:1}
+  .smallbtn{padding:7px 10px;background:#eef3f7;color:#375064}
+  .status{height:38px;border-top:1px solid var(--border);display:flex;align-items:center;padding:0 13px;font-size:12px;color:#6c7d89}
+  .dot{width:8px;height:8px;border-radius:50%;background:#29a35a;margin-right:7px}
+  .modalback{display:none;position:fixed;inset:0;background:#0008;z-index:1000;align-items:center;justify-content:center}
+  .modalback.show{display:flex}
+  .modal{width:min(850px,92vw);height:min(650px,85vh);background:#fff;border-radius:9px;box-shadow:0 15px 50px #0005;display:flex;flex-direction:column;overflow:hidden}
+  .modalhead{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;font-weight:800}
+  .close{background:transparent;font-size:24px;color:#71808b;padding:0 6px}
+  .modalcode{flex:1;margin:0;background:#0c131a;color:#e6eef5;padding:20px;overflow:auto;font:13px/1.6 "SFMono-Regular",Consolas,monospace;white-space:pre}
+  .modalfoot{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+  .copy{background:var(--blue);color:#fff;padding:10px 16px;font-weight:700}
+  .copy:hover{background:var(--blue2)}
+  .notice{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:#182b38;color:#fff;padding:10px 16px;border-radius:6px;transition:.2s;z-index:2000;font-size:13px}
+  .notice.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:900px){.main{grid-template-columns:190px 1fr}.right{display:none}}
+
+  .devicesback{display:none;position:fixed;inset:0;background:#e9edf1;z-index:900}
+  .devicesback.show{display:block}
+  .devicespanel{height:100%;display:flex;flex-direction:column;background:#fff}
+  .deviceshead{height:76px;padding:0 22px;border-bottom:1px solid var(--border);display:flex;align-items:center}
+  .devicestitle{font-size:21px;font-weight:800;color:#243746}
+  .devicesub{font-size:12px;color:#71818e;margin-top:3px}
+  .devicebody{padding:22px;max-width:1050px;width:100%;margin:0 auto;overflow:auto}
+  .deviceadd{display:flex;gap:10px;align-items:end;padding:16px;background:#f5f8fa;border:1px solid var(--border);border-radius:7px}
+  .deviceadd label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:#526572}
+  .deviceadd input,.deviceadd select{height:36px;border:1px solid #cbd5dc;border-radius:4px;padding:0 9px;background:#fff;font:inherit;color:#243746}
+  .deviceadd input{width:170px}
+  .adddevice{height:36px;padding:0 13px;background:var(--blue);color:#fff;font-weight:700}
+  .devicelist{margin-top:16px;display:grid;gap:9px}
+  .devicecard{display:flex;align-items:center;padding:13px 15px;border:1px solid var(--border);border-radius:6px;background:#fff}
+  .deviceicon{width:35px;height:35px;border-radius:6px;background:#e8f2fa;color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;margin-right:12px}
+  .deviceinfo{flex:1}.deviceinfo b{display:block}.deviceinfo span{font-size:12px;color:#758590}
+  .removeDevice{background:#f2f4f6;color:#6c7b86;padding:7px 10px}
+  .devicehint{margin-top:14px;font-size:12px;color:#758590}
+  @media(max-width:700px){.deviceadd{flex-wrap:wrap}.deviceadd label{flex:1;min-width:130px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top">
- <div class="robot-logo">ROBOT</div><div class="project-name">VEX Cortex Project</div>
- <button id="new">New</button><button id="save">Save</button><button id="undo">↶</button><button id="redo">↷</button>
- <div class="grow"></div><button id="devices">⚙ Robot Configuration</button><button class="run" id="generate">▶ Generate</button><button class="stop">■</button>
+<header>
+  <div class="logo">RobotC <span>Blocks</span></div>
+  <div class="project">My V5 Project</div>
+  <div class="spacer"></div>
+  <button class="topbtn" id="newBtn">New</button>
+  <button class="topbtn" id="saveBtn">Save</button>
+  <button class="topbtn" id="codeBtn">Copy Code</button>
+  <button class="topbtn run" id="runBtn">▶ Run</button>
 </header>
-<nav class="tabs"><div class="tab active">main</div><div class="tab">autonomous</div><div class="tab">usercontrol</div><div class="tab">+ Add Task</div></nav>
+<nav class="tabs">
+  <button class="tab active" id="blocksTab">Blocks</button>
+  <button class="tab" id="devicesTab">Devices</button>
+</nav>
 
-<div class="body">
-<aside class="left">
- <div class="left-title">ROBOT CONFIGURATION</div>
- <div class="device-section">
-  <div class="device-title">MOTORS</div>
-  <div class="device"><div class="device-icon">⚙</div><div><b>LeftMotor</b><small>Port 1 • VEX 393</small></div></div>
-  <div class="device"><div class="device-icon">⚙</div><div><b>RightMotor</b><small>Port 2 • VEX 393</small></div></div>
- </div>
- <div class="device-section">
-  <div class="device-title">SENSORS</div>
-  <div class="device"><div class="device-icon">●</div><div><b>Bumper</b><small>Digital • dgtl1</small></div></div>
-  <div class="device"><div class="device-icon">↻</div><div><b>Encoder</b><small>Digital • dgtl2/3</small></div></div>
- </div>
- <div class="device-section">
-  <div class="device-title">CONTROLLER</div>
-  <div class="device"><div class="device-icon">🎮</div><div><b>Joystick</b><small>USB / VEX Controller</small></div></div>
- </div>
- <div class="config"><button id="configBtn">Configure Robot</button></div>
-</aside>
+<main class="main">
+  <aside class="sidebar">
+    <div class="sidehead">Block Categories</div>
+    <div class="cat"><b>Events</b><small>program start</small></div>
+    <div class="cat"><b>Motion</b><small>motors &amp; drivetrain</small></div>
+    <div class="cat"><b>Control</b><small>wait, repeat, if</small></div>
+    <div class="cat"><b>Sensing</b><small>touch, distance, rotation</small></div>
+    <div class="cat"><b>Variables</b><small>set and change values</small></div>
+    <div class="cat"><b>Output</b><small>screen &amp; debug</small></div>
+    <div class="tip"><b>Tip</b><br>Drag blocks from the toolbox into the workspace. Blocks can be moved, snapped together, duplicated, and deleted just like Scratch.</div>
+  </aside>
 
-<main class="workspace"><div id="blockly"></div></main>
+  <section id="blocklyDiv">
+    <div class="workspacebar">BLOCK WORKSPACE · drag blocks to build your program</div>
+  </section>
 
-<aside class="right">
- <div class="right-tabs"><div class="rtab active">ROBOTC</div><div class="rtab">Messages</div></div>
- <textarea id="code" spellcheck="false"></textarea>
- <div class="codebar"><button class="gen" id="gen2">Generate RobotC</button><button class="copy" id="copy">Copy Code</button></div>
-</aside>
+  <aside class="right">
+    <div class="codehead">RobotC <span class="spacer"></span></div>
+    <div style="padding:18px;line-height:1.55;font-size:13px;color:#667985;overflow:auto">
+      <div style="font-size:15px;font-weight:800;color:#243746;margin-bottom:8px">Build your program</div>
+      <p>Drag blocks into the workspace and snap them together like Scratch.</p>
+      <p>When you're ready, click <b>Copy Code</b> to open the full generated RobotC program.</p>
+      <div style="margin-top:18px;padding:12px;border:1px solid #dbe5eb;border-radius:6px;background:#fafcfd">
+        <b>Workspace controls</b><br>
+        • Drag blocks to reposition them<br>
+        • Connect blocks by dragging them together<br>
+        • Use the zoom controls in the workspace<br>
+        • Drag blocks to the trash to delete them
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span>Ready to generate RobotC</div>
+  </aside>
+</main>
 </div>
-<footer class="status"><span class="ok">● Ready</span><span>VEX Cortex</span><span>RobotC</span><span id="count">0 blocks</span></footer>
+
+<div class="modalback" id="modal">
+  <div class="modal">
+    <div class="modalhead">RobotC Code <span class="spacer"></span><button class="close" id="closeBtn">×</button></div>
+    <pre class="modalcode" id="modalCode"></pre>
+    <div class="modalfoot"><button class="smallbtn" id="modalClose">Close</button><button class="copy" id="modalCopy">Copy code to clipboard</button></div>
+  </div>
 </div>
+<div class="notice" id="notice">Copied!</div>
 
-<div class="modal" id="modal"><div class="dialog">
-<h2>Robot Configuration</h2>
-<div class="dialog-body">
-<div class="row"><label>Robot name</label><input id="robotName" value="VEX Cortex Robot"></div>
-<div class="row"><label>Left motor</label><select id="lm"><option value="1">Port 1</option><option value="2">Port 2</option><option value="3">Port 3</option><option value="4">Port 4</option></select></div>
-<div class="row"><label>Right motor</label><select id="rm"><option value="2">Port 2</option><option value="1">Port 1</option><option value="3">Port 3</option><option value="4">Port 4</option></select></div>
-<div class="row"><label>Bumper</label><select><option>dgtl1</option><option>dgtl2</option><option>dgtl3</option></select></div>
-</div><div class="dialog-foot"><button id="close">Cancel</button><button class="okbtn" id="apply">Apply</button></div>
-</div></div>
-
-<xml id="toolbox" style="display:none">
-<category name="START" colour="#e86c00"><block type="rc_start"></block></category>
-<category name="MOTION" colour="#e86c00">
- <block type="rc_spin"></block><block type="rc_stop"></block><block type="rc_drive"></block><block type="rc_turn"></block>
-</category>
-<category name="CONTROL" colour="#f2a900">
- <block type="rc_wait"></block><block type="rc_repeat"><value name="N"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block><block type="rc_forever"></block>
-</category>
-<category name="SENSING" colour="#4285f4"><block type="rc_bumper"></block><block type="rc_encoder"></block><block type="rc_timer"></block></category>
-<category name="LOGIC" colour="#58a55c"><block type="controls_if"></block><block type="logic_compare"></block><block type="logic_boolean"></block></category>
-<category name="OPERATORS" colour="#8e63ce"><block type="math_number"></block><block type="math_arithmetic"></block></category>
-<category name="VARIABLES" colour="#d65db1" custom="VARIABLE"></category>
-</xml>
 
 <script>
-function stmtBlock(def,inputs,color){
- Blockly.Blocks[def]={init(){inputs.forEach(x=>{if(x.type==="dummy")this.appendDummyInput().appendField(x.text);else this.appendValueInput(x.name).setCheck(x.check||null).appendField(x.text||"")});this.setPreviousStatement(true);this.setNextStatement(true);this.setColour(color)}}
+const Blockly = window.Blockly;
+
+Blockly.defineBlocksWithJsonArray([
+ {type:"robot_program",message0:"when program starts",nextStatement:null,colour:"#5B80A5"},
+ {type:"motor_spin",message0:"spin %1 at %2 %% for %3 seconds",args0:[
+   {type:"field_dropdown",name:"MOTOR",options:[["Motor 1","motor1"],["Motor 2","motor2"],["Left Drive","leftDrive"],["Right Drive","rightDrive"]]},
+   {type:"field_number",name:"POWER",value:50,min:0,max:100},
+   {type:"field_number",name:"TIME",value:1,min:0}
+ ],previousStatement:null,nextStatement:null,colour:"#4C97FF"},
+ {type:"motor_stop",message0:"stop %1",args0:[{type:"field_dropdown",name:"MOTOR",options:[["Motor 1","motor1"],["Motor 2","motor2"],["All motors","allMotors"]]}],previousStatement:null,nextStatement:null,colour:"#4C97FF"},
+ {type:"motor_set_power",message0:"set %1 power to %2 %%",args0:[
+   {type:"field_dropdown",name:"MOTOR",options:[["Motor 1","motor1"],["Motor 2","motor2"],["Left Drive","leftDrive"],["Right Drive","rightDrive"]]},
+   {type:"field_number",name:"POWER",value:50,min:-100,max:100}
+ ],previousStatement:null,nextStatement:null,colour:"#4C97FF"},
+ {type:"wait_seconds",message0:"wait %1 seconds",args0:[{type:"field_number",name:"TIME",value:1,min:0}],previousStatement:null,nextStatement:null,colour:"#FFAB19"},
+ {type:"repeat_times",message0:"repeat %1 times %2",args0:[
+   {type:"field_number",name:"COUNT",value:5,min:1},
+   {type:"input_statement",name:"DO"}
+ ],previousStatement:null,nextStatement:null,colour:"#FFAB19"},
+ {type:"if_touch",message0:"if touch sensor %1 %2",args0:[
+   {type:"field_dropdown",name:"SENSOR",options:[["is pressed","pressed"],["is not pressed","not_pressed"]]},
+   {type:"input_statement",name:"DO"}
+ ],previousStatement:null,nextStatement:null,colour:"#FFAB19"},
+ {type:"read_distance",message0:"distance sensor value",output:"Number",colour:"#5CB1D6"},
+ {type:"read_rotation",message0:"rotation sensor value",output:"Number",colour:"#5CB1D6"},
+ {type:"set_variable",message0:"set %1 to %2",args0:[
+   {type:"field_input",name:"NAME",text:"speed"},
+   {type:"field_number",name:"VALUE",value:50}
+ ],previousStatement:null,nextStatement:null,colour:"#FF8C1A"},
+ {type:"change_variable",message0:"change %1 by %2",args0:[
+   {type:"field_input",name:"NAME",text:"speed"},
+   {type:"field_number",name:"VALUE",value:10}
+ ],previousStatement:null,nextStatement:null,colour:"#FF8C1A"},
+ {type:"print_screen",message0:"print %1 to Brain screen",args0:[{type:"input_value",name:"TEXT"}],previousStatement:null,nextStatement:null,colour:"#9966FF"}
+]);
+
+
+const toolbox = {
+  kind: "categoryToolbox",
+  contents: [
+    {kind:"category", name:"Events", colour:"#5B80A5", contents:[
+      {kind:"block", type:"robot_program"}
+    ]},
+    {kind:"category", name:"Motion", colour:"#4C97FF", contents:[
+      {kind:"block", type:"motor_spin"},
+      {kind:"block", type:"motor_stop"},
+      {kind:"block", type:"motor_set_power"}
+    ]},
+    {kind:"category", name:"Control", colour:"#FFAB19", contents:[
+      {kind:"block", type:"wait_seconds"},
+      {kind:"block", type:"repeat_times"},
+      {kind:"block", type:"if_touch"}
+    ]},
+    {kind:"category", name:"Sensing", colour:"#5CB1D6", contents:[
+      {kind:"block", type:"read_distance"},
+      {kind:"block", type:"read_rotation"}
+    ]},
+    {kind:"category", name:"Variables", colour:"#FF8C1A", contents:[
+      {kind:"block", type:"set_variable"},
+      {kind:"block", type:"change_variable"}
+    ]},
+    {kind:"category", name:"Output", colour:"#9966FF", contents:[
+      {kind:"block", type:"print_screen"}
+    ]},
+    {kind:"category", name:"Values", colour:"#59C059", contents:[
+      {kind:"block", type:"math_number"},
+      {kind:"block", type:"text"}
+    ]}
+  ]
+};
+
+const ws = Blockly.inject("blocklyDiv",{
+ toolbox:toolbox,
+ grid:{spacing:20,length:3,colour:"#d8dee5",snap:true},
+ zoom:{controls:true,wheel:true,startScale:.9,maxScale:1.6,minScale:.55},
+ trashcan:true,
+ move:{scrollbars:true,drag:true,dragOutside:true}
+});
+
+const gen = new Blockly.Generator("RobotC");
+gen.ORDER_ATOMIC=0; gen.ORDER_NONE=99;
+
+let devices = [
+  {type:"motor", name:"Motor 1", port:"1", code:"motor1"},
+  {type:"motor", name:"Motor 2", port:"2", code:"motor2"},
+  {type:"touch", name:"Touch Sensor", port:"3", code:"touchSensor"},
+  {type:"distance", name:"Distance Sensor", port:"4", code:"distanceSensor"},
+  {type:"rotation", name:"Rotation Sensor", port:"5", code:"rotationSensor"}
+];
+
+function deviceCode(type, name, fallback){
+  const d = devices.find(x => x.type===type && x.name===name) || devices.find(x => x.code===fallback);
+  return d ? (d.type==="motor" ? "motor"+d.port : d.code) : fallback;
 }
-Blockly.Blocks.rc_start={init(){this.appendDummyInput().appendField("when program starts");this.setNextStatement(true);this.setColour("#e86c00")}};
-Blockly.Blocks.rc_spin={init(){this.appendDummyInput().appendField("spin").appendField(new Blockly.FieldDropdown([["LeftMotor","LeftMotor"],["RightMotor","RightMotor"]]),"M").appendField("at").appendField(new Blockly.FieldNumber(100,-100,100),"P").appendField("%");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
-Blockly.Blocks.rc_stop={init(){this.appendDummyInput().appendField("stop").appendField(new Blockly.FieldDropdown([["LeftMotor","LeftMotor"],["RightMotor","RightMotor"],["both motors","BOTH"]]),"M");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
-Blockly.Blocks.rc_drive={init(){this.appendDummyInput().appendField("drive").appendField(new Blockly.FieldDropdown([["forward","F"],["reverse","R"]]),"D").appendField("at").appendField(new Blockly.FieldNumber(75,0,100),"P").appendField("%");this.appendValueInput("T").setCheck("Number").appendField("for seconds");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
-Blockly.Blocks.rc_turn={init(){this.appendDummyInput().appendField("turn").appendField(new Blockly.FieldDropdown([["left","L"],["right","R"]]),"D").appendField("at").appendField(new Blockly.FieldNumber(50,0,100),"P").appendField("%");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#e86c00")}};
-Blockly.Blocks.rc_wait={init(){this.appendValueInput("T").setCheck("Number").appendField("wait");this.appendDummyInput().appendField("seconds");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
-Blockly.Blocks.rc_repeat={init(){this.appendValueInput("N").setCheck("Number").appendField("repeat");this.appendDummyInput().appendField("times");this.appendStatementInput("DO").appendField("do");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
-Blockly.Blocks.rc_forever={init(){this.appendStatementInput("DO").appendField("forever");this.setPreviousStatement(true);this.setNextStatement(true);this.setColour("#f2a900")}};
-Blockly.Blocks.rc_bumper={init(){this.appendDummyInput().appendField("Bumper pressed");this.setOutput(true,"Boolean");this.setColour("#4285f4")}};
-Blockly.Blocks.rc_encoder={init(){this.appendDummyInput().appendField("Encoder counts");this.setOutput(true,"Number");this.setColour("#4285f4")}};
-Blockly.Blocks.rc_timer={init(){this.appendDummyInput().appendField("Timer seconds");this.setOutput(true,"Number");this.setColour("#4285f4")}};
+gen.scrub_ = function(block, code){ return code; };
 
-const G=new Blockly.Generator("RobotC");G.ORDER_ATOMIC=0;G.ORDER_NONE=99;G.init=()=>{};G.finish=x=>x;
-G.scrub_=function(b,c,t){let n=b.nextConnection&&b.nextConnection.targetBlock();return n&&!t?c+G.blockToCode(n):c};
-G.v=(b,n)=>G.valueToCode(b,n,G.ORDER_NONE)||"0";
-G.rc_start=()=>"";G.rc_spin=b=>`motor[${b.getFieldValue("M")} ] = ${b.getFieldValue("P")};\n`.replace(" ]","]");
-G.rc_stop=b=>b.getFieldValue("M")==="BOTH"?`motor[LeftMotor] = 0;\nmotor[RightMotor] = 0;\n`:`motor[${b.getFieldValue("M")}] = 0;\n`;
-G.rc_drive=b=>{let p=G.v(b,"T"),q=b.getFieldValue("P")*(b.getFieldValue("D")==="R"?-1:1);return `motor[LeftMotor] = ${q};\nmotor[RightMotor] = ${q};\nwait1Msec(${p} * 1000);\nmotor[LeftMotor] = 0;\nmotor[RightMotor] = 0;\n`};
-G.rc_turn=b=>{let p=b.getFieldValue("P"),q=b.getFieldValue("D")==="L"?-p:p;return `motor[LeftMotor] = ${q};\nmotor[RightMotor] = ${-q};\n`};
-G.rc_wait=b=>`wait1Msec(${G.v(b,"T")} * 1000);\n`;
-G.rc_repeat=b=>`for(int i = 0; i < ${G.v(b,"N")}; i++) {\n${G.statementToCode(b,"DO")}}\n`;
-G.rc_forever=b=>`while(true) {\n${G.statementToCode(b,"DO")}}\n`;
-G.rc_bumper=()=>["SensorValue[bumper] == 1",G.ORDER_ATOMIC];G.rc_encoder=()=>["SensorValue[encoder] ",G.ORDER_ATOMIC];G.rc_timer=()=>["time1[T1] / 1000.0",G.ORDER_ATOMIC];
-G.math_number=b=>[String(b.getFieldValue("NUM")),G.ORDER_ATOMIC];
-G.math_arithmetic=b=>{let o={ADD:"+",MINUS:"-",MULTIPLY:"*",DIVIDE:"/"}[b.getFieldValue("OP")]||"+";return [`(${G.v(b,"A")} ${o} ${G.v(b,"B")})`,G.ORDER_ATOMIC]};
-G.logic_boolean=b=>[b.getFieldValue("BOOL")==="TRUE"?"true":"false",G.ORDER_ATOMIC];
-G.logic_compare=b=>[`${G.v(b,"A")} ${({EQ:"==",NEQ:"!=",LT:"<",LTE:"<=",GT:">",GTE:">="}[b.getFieldValue("OP")])} ${G.v(b,"B")}`,G.ORDER_ATOMIC];
-
-const ws=Blockly.inject("blockly",{toolbox:document.getElementById("toolbox"),trashcan:true,grid:{spacing:20,length:3,colour:"#d2d2d2",snap:true},zoom:{controls:true,wheel:true,startScale:.9,maxScale:1.8,minScale:.5}});
-ws.addChangeListener(()=>document.getElementById("count").textContent=ws.getAllBlocks(false).length+" blocks");
+function statement(block){ return gen.statementToCode(block,"DO").trim(); }
+gen["robot_program"]=b=>"task main() {\\n";
+gen["motor_spin"]=b=>`motor[${b.getFieldValue("MOTOR")}] = ${b.getFieldValue("POWER")};\\nwait1Msec(${Number(b.getFieldValue("TIME"))*1000});\\nmotor[${b.getFieldValue("MOTOR")}] = 0;\\n`;
+gen["motor_stop"]=b=>`motor[${b.getFieldValue("MOTOR")}] = 0;\\n`;
+gen["motor_set_power"]=b=>`motor[${b.getFieldValue("MOTOR")}] = ${b.getFieldValue("POWER")};\\n`;
+gen["wait_seconds"]=b=>`wait1Msec(${Number(b.getFieldValue("TIME"))*1000});\\n`;
+gen["repeat_times"]=b=>`for(int i = 0; i < ${b.getFieldValue("COUNT")}; i++) {\\n${indent(statement(b))}\\n}\\n`;
+gen["if_touch"]=b=>`if (SensorValue[touchSensor] ${b.getFieldValue("SENSOR")==="pressed"?"== 1":"== 0"}) {\\n${indent(statement(b))}\\n}\\n`;
+gen["read_distance"]=b=>["SensorValue[distanceSensor]",gen.ORDER_ATOMIC];
+gen["read_rotation"]=b=>["SensorValue[rotationSensor]",gen.ORDER_ATOMIC];
+gen["set_variable"]=b=>`${b.getFieldValue("NAME")} = ${b.getFieldValue("VALUE")};\\n`;
+gen["change_variable"]=b=>`${b.getFieldValue("NAME")} += ${b.getFieldValue("VALUE")};\\n`;
+gen["print_screen"]=b=>`displayTextLine(0, "%s", ${gen.valueToCode(b,"TEXT",gen.ORDER_NONE)||'""'});\\n`;
+gen["math_number"]=b=>[b.getFieldValue("NUM"),gen.ORDER_ATOMIC];
+gen["text"]=b=>[`"${String(b.getFieldValue("TEXT")).replace(/"/g,'\\"')}"`,gen.ORDER_ATOMIC];
+function indent(s){return s.split("\n").map(x=>x?"  "+x:x).join("\n")}
 
 function generate(){
- let body=G.workspaceToCode(ws);
- let code=`#pragma config(Sensor, in1, bumper, sensorTouch)
-#pragma config(Motor, port1, LeftMotor, tmotorVex393_HBridge, openLoop)
-#pragma config(Motor, port2, RightMotor, tmotorVex393_MC29, openLoop)
-#pragma platform(VEX2)
-
-task main()
-{
-${body.split("\n").map(x=>x?"    "+x:x).join("\n")}
-}`;
- document.getElementById("code").value=code;
+ let top=ws.getTopBlocks(true), out="";
+ for(const b of top) out += gen.blockToCode(b);
+ if(out) out = out.trimEnd() + "\\n}";
+ if(!out) out="// Drag blocks into the workspace to generate RobotC code.\\n";
+ return out;
 }
-document.getElementById("generate").onclick=generate;document.getElementById("gen2").onclick=generate;
-document.getElementById("copy").onclick=()=>{generate();navigator.clipboard.writeText(document.getElementById("code").value);};
-document.getElementById("new").onclick=()=>{ws.clear();document.getElementById("code").value=""};
-document.getElementById("save").onclick=()=>localStorage.setItem("robotProject",JSON.stringify(Blockly.serialization.workspaces.save(ws)));
-document.getElementById("devices").onclick=document.getElementById("configBtn").onclick=()=>document.getElementById("modal").classList.add("show");
-document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");
-document.getElementById("apply").onclick=()=>document.getElementById("modal").classList.remove("show");
-document.getElementById("undo").onclick=()=>ws.undo(false);document.getElementById("redo").onclick=()=>ws.undo(true);
-generate();
+function refresh(){
+ const c=generate();
+ document.getElementById("code").textContent=c;
+ document.getElementById("modalCode").textContent=c;
+}
+ws.addChangeListener(refresh);
+
+function seed(){
+ const start=ws.newBlock("robot_program"); start.initSvg(); start.render(); start.moveBy(70,60);
+ const spin=ws.newBlock("motor_spin"); spin.initSvg(); spin.render(); spin.moveBy(70,125);
+ start.nextConnection.connect(spin.previousConnection);
+ const wait=ws.newBlock("wait_seconds"); wait.initSvg(); wait.render(); wait.moveBy(70,220);
+ spin.nextConnection.connect(wait.previousConnection);
+}
+seed(); renderDevices(); refresh();
+
+
+function renderDevices(){
+  const list=document.getElementById("deviceList");
+  list.innerHTML="";
+  devices.forEach((d,i)=>{
+    const el=document.createElement("div");
+    el.className="devicecard";
+    const icon=d.type==="motor"?"M":d.type==="touch"?"T":d.type==="distance"?"D":"R";
+    el.innerHTML=`<div class="deviceicon">${icon}</div>
+      <div class="deviceinfo"><b>${escapeHtml(d.name)}</b><span>${d.type} · Port ${d.port}</span></div>
+      <button class="removeDevice" data-index="${i}">Remove</button>`;
+    list.appendChild(el);
+  });
+  list.querySelectorAll(".removeDevice").forEach(btn=>{
+    btn.onclick=()=>{devices.splice(Number(btn.dataset.index),1);renderDevices();refresh();}
+  });
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function openDevices(){renderDevices();document.getElementById("devicesPage").classList.add("show")}
+function closeDevices(){document.getElementById("devicesPage").classList.remove("show")}
+document.getElementById("blocksTab").onclick=()=>{closeDevices();document.getElementById("blocksTab").classList.add("active");document.getElementById("devicesTab").classList.remove("active")};
+document.getElementById("devicesTab").onclick=()=>{openDevices();document.getElementById("devicesTab").classList.add("active");document.getElementById("blocksTab").classList.remove("active")};
+document.getElementById("devicesClose").onclick=()=>{closeDevices();document.getElementById("blocksTab").classList.add("active");document.getElementById("devicesTab").classList.remove("active")};
+document.getElementById("addDevice").onclick=()=>{
+  const type=document.getElementById("deviceType").value;
+  const name=document.getElementById("deviceName").value.trim() || (type==="motor"?"Motor":"Sensor");
+  const port=document.getElementById("devicePort").value;
+  const code=type==="motor"?"motor"+port:(type==="touch"?"touchSensor":type==="distance"?"distanceSensor":"rotationSensor");
+  devices.push({type,name,port,code});
+  renderDevices(); refresh(); 
+};
+document.getElementById("deviceType").onchange=e=>{
+  const defaults={motor:"Motor 1",touch:"Touch Sensor",distance:"Distance Sensor",rotation:"Rotation Sensor"};
+  document.getElementById("deviceName").value=defaults[e.target.value];
+};
+
+function showModal(){
+ const c=generate();
+ document.getElementById("modalCode").textContent=c;
+ document.getElementById("modal").classList.add("show");
+}
+function hideModal(){document.getElementById("modal").classList.remove("show")}
+async function copyCode(){
+ const text=generate();
+ try{await navigator.clipboard.writeText(text); toast("Code copied to clipboard!")}
+ catch(e){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast("Code copied!")}
+}
+function toast(t){const n=document.getElementById("notice");n.textContent=t;n.classList.add("show");setTimeout(()=>n.classList.remove("show"),1600)}
+document.getElementById("codeBtn").onclick=showModal;
+document.getElementById("modalCopy").onclick=copyCode;
+document.getElementById("closeBtn").onclick=hideModal;
+document.getElementById("modalClose").onclick=hideModal;
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")hideModal()};
+document.getElementById("newBtn").onclick=()=>{if(confirm("Clear the current project?")){ws.clear();refresh()}};
+document.getElementById("saveBtn").onclick=()=>toast("Project saved in this browser session.");
+document.getElementById("runBtn").onclick=()=>toast("Preview mode: generated RobotC is ready to download to your V5 project.");
+window.addEventListener("resize",()=>Blockly.svgResize(ws));
 </script>
+
+<div class="devicesback" id="devicesPage">
+  <section class="devicespanel">
+    <div class="deviceshead">
+      <div>
+        <div class="devicestitle">Devices</div>
+        <div class="devicesub">Configure the robot hardware used by your RobotC program.</div>
+      </div>
+      <button class="close" id="devicesClose">×</button>
+    </div>
+    <div class="devicebody">
+      <div class="deviceadd">
+        <label>Device type
+          <select id="deviceType">
+            <option value="motor">Motor</option>
+            <option value="touch">Touch Sensor</option>
+            <option value="distance">Distance Sensor</option>
+            <option value="rotation">Rotation Sensor</option>
+          </select>
+        </label>
+        <label>Name <input id="deviceName" value="Motor 1"></label>
+        <label>Port
+          <select id="devicePort">
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+          </select>
+        </label>
+        <button class="adddevice" id="addDevice">+ Add Device</button>
+      </div>
+      <div class="devicelist" id="deviceList"></div>
+      <div class="devicehint">Device names and ports are used when generating RobotC code.</div>
+    </div>
+  </section>
+</div>
 </body>
 </html>
